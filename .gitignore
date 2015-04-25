@@ -1,3 +1,21 @@
+# ========================
+# Maven/Eclipse/Java files
+# ========================
+
+# build files
+/target/*
+
+# log files
+*.log
+
+# eclipse housekeeping
+.classpath
+/.settings/*
+
+# ========================
+# Generic Files
+# ========================
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
