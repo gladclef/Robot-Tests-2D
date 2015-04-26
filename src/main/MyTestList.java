@@ -5,6 +5,7 @@ package main;
 
 import org.jbox2d.testbed.framework.TestbedModel;
 
+import tests.SegmentedArmPhysics;
 import tests.SimpleBox;
 
 /**
@@ -14,7 +15,10 @@ import tests.SimpleBox;
 public class MyTestList {
   public static void populateModel(TestbedModel model) {
     
+    model.addCategory("Robot Tests");
+    
     model.addCategory("Physics Test");
+    model.addTest(new SegmentedArmPhysics());
     model.addTest(new SimpleBox());
   }
 }
