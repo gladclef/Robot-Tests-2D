@@ -17,7 +17,7 @@ public class SegmentBody {
   /** length of combined joints and segments between this segment and the end
    *  effector segment (includes this segment's joint), in meters */
   private float lengthToEndEffector;
-  /** radius of the joint at the end of this segment, in meters */
+  /** radius of the joint at the beginning of this segment, in meters */
   private float jointRadius;
   /** The body of the segment */
   private Body body;

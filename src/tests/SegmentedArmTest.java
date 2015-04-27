@@ -10,7 +10,7 @@ import org.jbox2d.dynamics.FixtureDef;
 
 import testsBodies.RobotArm;
 
-public class SegmentedArmPhysics extends TestbedTest {
+public class SegmentedArmTest extends TestbedTest {
   
   // in meters
   private static final float BASE_RADIUS = 4f;
