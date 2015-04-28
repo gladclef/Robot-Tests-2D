@@ -46,6 +46,13 @@ public class RobotArmSegmented {
   public float strengthRatio = -1;
   
   /////////////////////////////////////////////////////////////////////////////
+  // OTHER VALUES, SET BY THE USER
+  /////////////////////////////////////////////////////////////////////////////
+
+  /** the end effector attempts to retrieve the goal */
+  private Body goal;
+  
+  /////////////////////////////////////////////////////////////////////////////
   // SET INTERNALLY, DOES NOT NEED TO BE SET BY THE USER
   /////////////////////////////////////////////////////////////////////////////
   
@@ -270,5 +277,13 @@ public class RobotArmSegmented {
     populateSegments(segLengths, segPositions);
     populateJoints(segLengths, segPositions);
     populateMotors();
+  }
+
+  public Body getGoal() {
+    return goal;
+  }
+
+  public void setGoal(Body goal) {
+    this.goal = goal;
   }
 }

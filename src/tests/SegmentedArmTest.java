@@ -19,6 +19,11 @@ public class SegmentedArmTest extends TestbedTest {
   
   private Body base;
   private RobotArmSegmented arm;
+  private SegmentedArmPositions positions;
+  
+  public SegmentedArmTest() {
+    positions = new SegmentedArmPositions();
+  }
 
   @Override
   public boolean isSaveLoadEnabled() {
@@ -67,7 +72,8 @@ public class SegmentedArmTest extends TestbedTest {
     
     // set an initial position
     {
-      SegmentedArmPositions.setPosition(arm, SegmentedArmPositions.positions.HORIZONTAL);
+      positions.setPosition(arm, SegmentedArmPositions.positions.HORIZONTAL);
+      positions.setPosition(arm, SegmentedArmPositions.positions.MIDSPACE);
     }
   }
 
