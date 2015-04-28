@@ -99,15 +99,15 @@ public class RobotArmSegmented {
   }
 
   private float[] calculateSegmentLengths() {
-    float jointLengths = (segmentCount - 1) * jointRadius * 2.0f;
-    float totalSegLength = totalLength - jointLengths;
+    double jointLengths = (segmentCount - 1) * jointRadius * 2.0;
+    double totalSegLength = totalLength - jointLengths;
     
     // The "split length" is the total length of all segments in
     // "split" units, where the shortest segment is 1 split unit
     // long, the next is SPLIT_RATIO split units long, the next
     // SPLIT_RATIO^2 units long, etc.
-    float splitLength = 1;
-    for (int i = 2; i < segmentCount + 1; i++) {
+    double splitLength = 1;
+    for (int i = 1; i < segmentCount; i++) {
       splitLength += Math.pow(splitRatio, i);
     }
     
@@ -115,10 +115,18 @@ public class RobotArmSegmented {
     float[] segmentLengths = new float[segmentCount];
     for (int i = 0; i < segmentCount; i++) {
       // length of the segment in Split Ratio units
-      float segSRLength = (float) Math.pow(splitRatio, segmentCount - i);
+      double segSRLength = Math.pow(splitRatio, segmentCount - 1 - i);
       // length of the segment in meters
-      segmentLengths[i] = totalSegLength * segSRLength / splitLength;
+      segmentLengths[i] = (float) (totalSegLength * segSRLength / splitLength);
     }
+    
+    // assert the sum is correct
+    double totalLengthCheck = 0;
+    for (float f : segmentLengths) {
+      totalLengthCheck += f;
+    }
+    assert(Math.abs(totalLengthCheck - totalSegLength) < 0.1) :
+      ("expected tlc: " + totalSegLength + " - actual: " + totalLengthCheck);
     
     return segmentLengths;
   }
@@ -126,15 +134,20 @@ public class RobotArmSegmented {
   private Vec2[] calculateSegmentPositions() {
     float[] segmentLengths = calculateSegmentLengths();
     
-    float lengthSummation = 0;
+    double lengthSummation = 0;
     Vec2[] positions = new Vec2[segmentCount];
     for (int i = 0; i < segmentCount; i++) {
       positions[i] = new Vec2(
-          basePos.x + baseRadius + lengthSummation + 
+          basePos.x + baseRadius + (float)lengthSummation + 
               (segmentLengths[i] / 2.0f) ,
           basePos.y);
       lengthSummation += segmentLengths[i] + (jointRadius * 2.0f);
     }
+    
+    // verify the lengths were added up correctly
+    double expected = totalLength + jointRadius * 2.0;
+    assert(Math.abs(lengthSummation - expected) < 0.1f) :
+      ("Expected ls: " + expected + " - actual: " + lengthSummation);
     
     return positions;
   }

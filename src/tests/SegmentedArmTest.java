@@ -51,11 +51,6 @@ public class SegmentedArmTest extends RobotTest {
       base.createFixture(fd);
     }
     
-    // set the logic type
-    {
-      logic = new MoveTowardsGoal(arm, positions);
-    }
-    
     // make a grid
     {
       //CommonObjects.Grid(getWorld());
@@ -75,6 +70,11 @@ public class SegmentedArmTest extends RobotTest {
       arm.splitRatio = 1.5f;
       arm.strengthRatio = 2.0f;
       arm.populateRobotArm();
+    }
+    
+    // set the logic type
+    {
+      logic = new MoveTowardsGoal(arm, positions);
     }
     
     // clear the goal and set an initial position
