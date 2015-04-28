@@ -5,9 +5,8 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
-import org.jbox2d.testbed.framework.TestbedTest;
 
-public class SimpleBox extends TestbedTest {
+public class SimpleBox extends RobotTest {
 
   @Override
   public boolean isSaveLoadEnabled() {
@@ -49,5 +48,10 @@ public class SimpleBox extends TestbedTest {
   @Override
   public String getTestName() {
     return "Simple Block Test";
+  }
+
+  @Override
+  public void update() {
+    // do nothing
   }
 }

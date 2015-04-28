@@ -12,7 +12,6 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.jbox2d.testbed.framework.TestbedController;
 import org.jbox2d.testbed.framework.TestbedErrorHandler;
 import org.jbox2d.testbed.framework.TestbedModel;
 import org.jbox2d.testbed.framework.TestbedController.MouseBehavior;
@@ -50,8 +49,8 @@ public class Main {
     
     // set up the model
     TestbedModel model = new TestbedModel();
-    final TestbedController controller =
-        new TestbedController(model, UpdateBehavior.UPDATE_CALLED, MouseBehavior.NORMAL,
+    final RobotProjectController controller =
+        new RobotProjectController(model, UpdateBehavior.UPDATE_CALLED, MouseBehavior.NORMAL,
             new TestbedErrorHandler() {
               @Override
               public void serializationError(Exception e, String message) {

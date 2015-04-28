@@ -80,7 +80,6 @@ public class Motor extends RevoluteJointDef {
     maxMotorTorque = sign * Math.min(
         Math.abs(desiredTorque),
         actualMaxTorque);
-    TestPanelJ2D.log.debug("" + maxMotorTorque + " : " + actualMaxTorque);
     if (joint != null) {
       joint.setMaxMotorTorque(maxMotorTorque); 
     }

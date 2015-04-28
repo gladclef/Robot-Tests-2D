@@ -29,10 +29,21 @@ public class Segment extends SegmentBody {
   }
   
   /**
-   * Creates a new energy potential for the segment's position
-   * and updates the motor torque to move the segment accordingly. 
+   * Calculates current torque on the joint.
    */
-  public void update() {
+  public void getTorque() {
+    Vec2 centerOfMass = new Vec2();
+    float totalMass = calculateLocalCenterOfMass(centerOfMass);
     // TODO
+  }
+  
+  /**
+   * Calculates the center of mass for the following segments.
+   * @param The center of mass
+   * @return The total mass 
+   */
+  public float calculateLocalCenterOfMass(Vec2 centerOfMass) {
+    // TODO
+    return 0;
   }
 }

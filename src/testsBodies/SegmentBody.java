@@ -23,7 +23,9 @@ public class SegmentBody {
   private Body body;
   /** The next segment in line.
    *  If null, then this must be the end effector. */
-  protected SegmentBody nextSegmentBody;
+  private SegmentBody nextSegmentBody;
+  /** The previous segment in line. */
+  private SegmentBody prevSegmentBody;
 
   public SegmentBody() {
     this(0f, new Vec2(0f, 0f), 0f, null);
@@ -105,6 +107,15 @@ public class SegmentBody {
 
   public void setNext(SegmentBody nextSegmentBody) {
     this.nextSegmentBody = nextSegmentBody;
+    nextSegmentBody.setPrev(this);
+  }
+
+  public SegmentBody getPrev() {
+    return prevSegmentBody;
+  }
+
+  protected void setPrev(SegmentBody prevSegmentBody) {
+    this.prevSegmentBody = prevSegmentBody;
   }
   
   public boolean isEndEffector() {
@@ -120,27 +131,43 @@ public class SegmentBody {
    */
   public Vec2 getLocalNextJointPos() {
     
-    // get some information about this body
-    float angle = body.getAngle();
-    
     // get some information about the next body
     float nextJointRadius = 0;
     if (nextSegmentBody != null) {
       nextJointRadius = nextSegmentBody.getJointRadius();
     }
     
+    // get the position based on the axis position
+    float lengthToNextJoint = jointRadius + length + nextJointRadius;
+    return getLocalAxisPosition(lengthToNextJoint);
+  }
+  
+  /**
+   * Gets the world position for the controlling joint of this segment.
+   * @return The world position.
+   */
+  public Vec2 getWorldJointPosition() {
+    float lengthToJoint = length / -2.0f - jointRadius;
+    Vec2 localJointPosition = getLocalAxisPosition(lengthToJoint);
+    return localJointPosition.add(body.getWorldPoint(new Vec2()));
+  }
+  
+  /**
+   * Get the position along a certain length of the axis.
+   * @param lengthOnAxis The length along the axis to travel,
+   *     where +length is towards the end effector and -length is towards the
+   *     base.
+   * @return The local position, reference point the controlling joing of the
+   *     segment.
+   */
+  private Vec2 getLocalAxisPosition(float lengthOnAxis) {
+    
+    // get some information about this body
+    float angle = body.getAngle();
+    
     // calculate the offset (some basic trigonometry)
-    float lengthToJoint = jointRadius + length + nextJointRadius;
-    float opposite = lengthToJoint * (float)Math.sin(angle);
-    float adjacent = lengthToJoint * (float)Math.cos(angle);
-    float x, y;
-    if (angle % Math.PI < (Math.PI / 2)) {
-      x = adjacent;
-      y = opposite;
-    } else {
-      x = opposite;
-      y = adjacent;
-    }
+    float y = lengthOnAxis * (float)Math.sin(angle);
+    float x = lengthOnAxis * (float)Math.cos(angle);
     
     // return the relative position
     return new Vec2(x, y);

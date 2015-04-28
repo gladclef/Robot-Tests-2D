@@ -1,17 +1,18 @@
 package tests;
 
 import org.jbox2d.dynamics.Body;
-import org.jbox2d.testbed.framework.TestbedTest;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.FixtureDef;
 
+import robot_logic.ArmLogic;
+import robot_logic.MoveTowardsGoal;
 import robot_logic.SegmentedArmPositions;
 import testsBodies.RobotArmSegmented;
 
-public class SegmentedArmTest extends TestbedTest {
+public class SegmentedArmTest extends RobotTest {
   
   // in meters
   private static final float BASE_RADIUS = 4f;
@@ -20,6 +21,7 @@ public class SegmentedArmTest extends TestbedTest {
   private Body base;
   private RobotArmSegmented arm;
   private SegmentedArmPositions positions;
+  private ArmLogic logic;
   
   public SegmentedArmTest() {
     positions = new SegmentedArmPositions();
@@ -49,6 +51,11 @@ public class SegmentedArmTest extends TestbedTest {
       base.createFixture(fd);
     }
     
+    // set the logic type
+    {
+      logic = new MoveTowardsGoal(arm, positions);
+    }
+    
     // make a grid
     {
       //CommonObjects.Grid(getWorld());
@@ -70,8 +77,9 @@ public class SegmentedArmTest extends TestbedTest {
       arm.populateRobotArm();
     }
     
-    // set an initial position
+    // clear the goal and set an initial position
     {
+      positions.goal = null;
       positions.setPosition(arm, SegmentedArmPositions.positions.HORIZONTAL);
       positions.setPosition(arm, SegmentedArmPositions.positions.MIDSPACE);
     }
@@ -88,5 +96,10 @@ public class SegmentedArmTest extends TestbedTest {
 
   public void setArm(RobotArmSegmented arm) {
     this.arm = arm;
+  }
+
+  @Override
+  public void update() {
+    logic.update();
   }
 }

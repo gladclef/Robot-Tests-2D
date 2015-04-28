@@ -231,13 +231,8 @@ public class RobotArmSegmented {
         Vec2 distance = tempSeg.getBody().getWorldCenter().sub(
             localCenterOfMass);
         float massRatio = data.mass / totalTqMass;
-        TestPanelJ2D.log.debug(
-            " d:" + distance +
-            " c:" + data.center.add(distance) +
-            " /m:" + data.center.add(distance).mul(massRatio));
         localCenterOfMass =
             localCenterOfMass.add(data.center.add(distance).mul(massRatio));
-        TestPanelJ2D.log.debug(" --- com:" + localCenterOfMass);
       }
       localCenterOfMass = localCenterOfMass.sub(
           seg.getBody().getWorldCenter()).add(
