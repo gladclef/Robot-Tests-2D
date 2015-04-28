@@ -21,6 +21,9 @@ public class SegmentBody {
   private float jointRadius;
   /** The body of the segment */
   private Body body;
+  /** The next segment in line.
+   *  If null, then this must be the end effector. */
+  protected SegmentBody nextSegmentBody;
 
   public SegmentBody() {
     this(0f, new Vec2(0f, 0f), 0f, null);
@@ -94,5 +97,52 @@ public class SegmentBody {
 
   public void setBody(Body body) {
     this.body = body;
+  }
+
+  public SegmentBody getNext() {
+    return nextSegmentBody;
+  }
+
+  public void setNext(SegmentBody nextSegmentBody) {
+    this.nextSegmentBody = nextSegmentBody;
+  }
+  
+  public boolean isEndEffector() {
+    return (nextSegmentBody == null);
+  }
+  
+  /**
+   * Calculates the position of the next revolute joint relative to the
+   * position of this segment's revolute joint, where
+   * Revolute Joint of Segment = pivot point that controls the segment.
+   * @return The revolute point controlling the next segment, or the goal
+   *     position if this is the end effector.
+   */
+  public Vec2 getLocalNextJointPos() {
+    
+    // get some information about this body
+    float angle = body.getAngle();
+    
+    // get some information about the next body
+    float nextJointRadius = 0;
+    if (nextSegmentBody != null) {
+      nextJointRadius = nextSegmentBody.getJointRadius();
+    }
+    
+    // calculate the offset (some basic trigonometry)
+    float lengthToJoint = jointRadius + length + nextJointRadius;
+    float opposite = lengthToJoint * (float)Math.sin(angle);
+    float adjacent = lengthToJoint * (float)Math.cos(angle);
+    float x, y;
+    if (angle % Math.PI < (Math.PI / 2)) {
+      x = adjacent;
+      y = opposite;
+    } else {
+      x = opposite;
+      y = adjacent;
+    }
+    
+    // return the relative position
+    return new Vec2(x, y);
   }
 }

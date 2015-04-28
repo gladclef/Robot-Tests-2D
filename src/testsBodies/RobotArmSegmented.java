@@ -13,8 +13,9 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
 
-public class RobotArm {
+public class RobotArmSegmented {
   
   /////////////////////////////////////////////////////////////////////////////
   // MUST BE SET BEFORE THE POPULATE METHOD IS USED
@@ -40,6 +41,9 @@ public class RobotArm {
   
   /** ratio of lengths between each successive segment */
   public float splitRatio = -1;
+  /** ratio of maximum applicable torque to the torque necessary to hold each
+   *  motor against the force of gravity */
+  public float strengthRatio = -1;
   
   /////////////////////////////////////////////////////////////////////////////
   // SET INTERNALLY, DOES NOT NEED TO BE SET BY THE USER
@@ -48,7 +52,7 @@ public class RobotArm {
   /** list of segments in the arm, including the end effector */
   private List<Segment> segments;
 
-  public RobotArm() {}
+  public RobotArmSegmented() {}
   
   private void checkInitialized() {
     if (base == null) {
@@ -77,6 +81,9 @@ public class RobotArm {
     }
     if (splitRatio < 0) {
       throw new InvalidParameterException("splitRatio must be set before populating robot arm.");
+    }
+    if (strengthRatio < 0) {
+      throw new InvalidParameterException("strengthRatio must be set before populating robot arm.");
     }
   }
 
@@ -116,9 +123,9 @@ public class RobotArm {
     Vec2[] positions = new Vec2[segmentCount];
     for (int i = 0; i < segmentCount; i++) {
       positions[i] = new Vec2(
-          basePos.x,
-          basePos.y + baseRadius + lengthSummation + 
-            (segmentLengths[i] / 2.0f) );
+          basePos.x + baseRadius + lengthSummation + 
+              (segmentLengths[i] / 2.0f) ,
+          basePos.y);
       lengthSummation += segmentLengths[i] + (jointRadius * 2.0f);
     }
     
@@ -131,7 +138,7 @@ public class RobotArm {
       // create the fixtures and shapes for the segments
       FixtureDef fixtureDef = new FixtureDef();
       PolygonShape shapeDef = new PolygonShape();
-      shapeDef.setAsBox(segmentWidth / 2.0f, segLengths[i] / 2.0f);
+      shapeDef.setAsBox(segLengths[i] / 2.0f, segmentWidth / 2.0f);
       fixtureDef.shape = shapeDef;
       fixtureDef.density = 1.0f;
       fixtureDef.friction = 0.2f;
@@ -142,6 +149,11 @@ public class RobotArm {
       blockBody.type = BodyType.DYNAMIC;
       Body segBody = world.createBody(blockBody);
       segBody.createFixture(fixtureDef);
+      
+      // verify that everything was done correctly
+      assert (segBody.getWorldPoint(new Vec2(0f, 0f)).equals(
+          segPositions[i])) :
+            "segment origin out of alignment with creation origin";
       
       // track the segments
       segments.add(new Segment(
@@ -162,46 +174,83 @@ public class RobotArm {
       fixtureDef.shape = shapeDef;
       fixtureDef.density = 1.0f;
       fixtureDef.friction = 0.2f;
+      
+      // verify that the origin is still oriented around the segment lever arm
+      assert (segments.get(i).getBody()
+          .getWorldPoint(new Vec2(0f, 0f)).equals(
+          segPositions[i])) : "origin out of alignment with segment lever arm";
 
       // create the bodies for the joints and attach to the segments
       shapeDef.m_p.set(new Vec2(
-          0f,
-          (segLengths[i] / 2.0f) + jointRadius));
+          (segLengths[i] / 2.0f) + jointRadius,
+          0f));
       segments.get(i).getBody().createFixture(fixtureDef);
     }
   }
   
-  private void populateMotors(Vec2[] segPositions) {
+  private void populateMotors() {
     Body b1 = null;
     Body b2 = base;
     
     for (int segIndex = 0; segIndex < segmentCount; segIndex++) {
 
-      // create the motor
+      // get the segment
       Segment seg = segments.get(segIndex);
+      Vec2 segPosition = seg.getBody().getWorldPoint(new Vec2(0f, 0f));
+      
+      // create the motor
       b1 = b2;
       b2 = seg.getBody();
-      Vec2 anchor = new Vec2(
-          segPositions[segIndex].x,
-          segPositions[segIndex].y - seg.getLength()/2.0f - seg.getJointRadius());
-      Motor motor = new Motor(b1, b2, anchor);
+      Vec2 worldPivotPoint = new Vec2(
+          segPosition.x - seg.getLength()/2.0f - 
+              seg.getJointRadius(),
+          segPosition.y);
+      Motor motor = new Motor(b1, b2, worldPivotPoint);
+      seg.setMotor(motor);
       
-      // calculate the maximum torque necessary
+      // calculate the total mass and
+      // the center of mass relative to the seg origin
       float totalTqMass = 0;
+      Vec2 localCenterOfMass = seg.getBody().getWorldCenter();
       for (int i = segIndex; i < segmentCount; i++) {
+        Segment tempSeg = segments.get(i);
+        
+        // get the mass
         MassData data = new MassData();
-        b2.getMassData(data);
+        tempSeg.getBody().getMassData(data);
         totalTqMass += data.mass;
+        
+        // add to the center of mass
+        Vec2 distance = tempSeg.getBody().getWorldCenter().sub(
+            localCenterOfMass);
+        float massRatio = data.mass / totalTqMass;
+        TestPanelJ2D.log.debug(
+            " d:" + distance +
+            " c:" + data.center.add(distance) +
+            " /m:" + data.center.add(distance).mul(massRatio));
+        localCenterOfMass =
+            localCenterOfMass.add(data.center.add(distance).mul(massRatio));
+        TestPanelJ2D.log.debug(" --- com:" + localCenterOfMass);
       }
-      float totalTqLength = seg.getLengthToEndEffector() +
-          seg.getLength();
-      float totalTqAccel = world.getGravity().y;
-      float totalTq = (float) (0.5 * totalTqAccel * totalTqMass * 
-          Math.pow(totalTqLength, 2));
+      localCenterOfMass = localCenterOfMass.sub(
+          seg.getBody().getWorldCenter()).add(
+          seg.getBody().getLocalCenter());
+      
+      // calculate the maximum torque necessary to hold horizontal against the
+      // force of gravity
+      Vec2 localPivotPoint = segPosition.sub(worldPivotPoint);
+      Vec2 relCenterOfMass = localPivotPoint.add(localCenterOfMass);
+      float totalTqLength = (float) Math.sqrt(
+          Math.pow(relCenterOfMass.x, 2) + 
+          Math.pow(relCenterOfMass.y, 2));
+      float totalTqAccel = (float) Math.sqrt(
+          Math.pow(world.getGravity().x, 2) +
+          Math.pow(world.getGravity().y, 2));
+      float totalTq = (float) (totalTqLength * totalTqAccel * totalTqMass);
       
       // set the absolute maximum possible torque of the motor
       // relative to the total applicable torque from gravity.
-      motor.setActualMaxTorque(totalTq * 2.0f);
+      motor.setActualMaxTorque(totalTq * strengthRatio);
       
       // create the motor in the world
       motor.createJoint(world);
@@ -220,6 +269,6 @@ public class RobotArm {
 
     populateSegments(segLengths, segPositions);
     populateJoints(segLengths, segPositions);
-    populateMotors(segPositions);
+    populateMotors();
   }
 }

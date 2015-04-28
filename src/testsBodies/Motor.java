@@ -8,6 +8,7 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
+import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
 
 /**
  * @author Benjamin
@@ -54,7 +55,9 @@ public class Motor extends RevoluteJointDef {
    * @param actualMaxTorque The maximum amount of torque that this motor can apply.
    */
   public void setActualMaxTorque(float actualMaxTorque) {
-    boolean updateTorque = (desiredTorque == Math.abs(actualMaxTorque));
+    boolean updateTorque = (
+        Math.abs(desiredTorque) >=
+        Math.abs(actualMaxTorque));
     this.actualMaxTorque = actualMaxTorque;
     if (updateTorque) {
       setTorque(desiredTorque);
@@ -73,11 +76,11 @@ public class Motor extends RevoluteJointDef {
    * @param desiredTorque The torque that is desired to be applied, in N-m.
    */
   public void setTorque(float desiredTorque) {
-    maxMotorTorque = Math.max(
-        Math.min(
-            desiredTorque,
-            actualMaxTorque),
-        -actualMaxTorque);
+    float sign = (desiredTorque < 0) ? -1 : 1;
+    maxMotorTorque = sign * Math.min(
+        Math.abs(desiredTorque),
+        actualMaxTorque);
+    TestPanelJ2D.log.debug("" + maxMotorTorque + " : " + actualMaxTorque);
     if (joint != null) {
       joint.setMaxMotorTorque(maxMotorTorque); 
     }

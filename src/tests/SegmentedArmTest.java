@@ -8,16 +8,17 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.FixtureDef;
 
-import testsBodies.RobotArm;
+import robot_logic.SegmentedArmPositions;
+import testsBodies.RobotArmSegmented;
 
 public class SegmentedArmTest extends TestbedTest {
   
   // in meters
   private static final float BASE_RADIUS = 4f;
-  private static final Vec2 BASE_POS = new Vec2(-20,-20);
+  private static final Vec2 BASE_POS = new Vec2(-26,0);
   
   private Body base;
-  private RobotArm arm;
+  private RobotArmSegmented arm;
 
   @Override
   public boolean isSaveLoadEnabled() {
@@ -50,17 +51,23 @@ public class SegmentedArmTest extends TestbedTest {
     
     // define each segment
     {
-      setArm(new RobotArm());
+      setArm(new RobotArmSegmented());
       arm.base = base;
       arm.world = getWorld();
       arm.segmentCount = 3;
       arm.baseRadius = BASE_RADIUS;
-      arm.totalLength = 50f;
+      arm.totalLength = 45f;
       arm.segmentWidth = 1.5f;
       arm.jointRadius = 0.5f;
       arm.basePos = BASE_POS;
       arm.splitRatio = 1.5f;
+      arm.strengthRatio = 2.0f;
       arm.populateRobotArm();
+    }
+    
+    // set an initial position
+    {
+      SegmentedArmPositions.setPosition(arm, SegmentedArmPositions.positions.HORIZONTAL);
     }
   }
 
@@ -69,11 +76,11 @@ public class SegmentedArmTest extends TestbedTest {
     return "Segmented Arm - Phys";
   }
 
-  public RobotArm getArm() {
+  public RobotArmSegmented getArm() {
     return arm;
   }
 
-  public void setArm(RobotArm arm) {
+  public void setArm(RobotArmSegmented arm) {
     this.arm = arm;
   }
 }
