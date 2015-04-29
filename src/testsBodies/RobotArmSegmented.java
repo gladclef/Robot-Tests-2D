@@ -13,7 +13,6 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
-import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
 
 public class RobotArmSegmented {
   

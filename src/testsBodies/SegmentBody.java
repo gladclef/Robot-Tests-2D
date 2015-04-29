@@ -28,7 +28,7 @@ public class SegmentBody {
   private SegmentBody prevSegmentBody;
 
   public SegmentBody() {
-    this(0f, new Vec2(0f, 0f), 0f, null);
+    this(0f, new Vec2(), 0f, null);
   }
   
   public SegmentBody(float length, Vec2 initPosition, float jointRadius, Body body) {
@@ -59,30 +59,36 @@ public class SegmentBody {
   }
 
   /**
-   * Sets the length to the end effector.
+   * Calculates and sets the length to the end effector, not including the end
+   *     effector, from the end of this segment body onward.
    * @param segments The other segments between this segment and the end
    *     effector, including the end effector segment.
    */
   public void updateLengthToEndEffector(List<SegmentBody> segments) {
-    lengthToEndEffector = getJointRadius() * 2.0f;
-    
     int segIndex = 1;
     for (SegmentBody seg : segments) {
       if (segIndex == segments.size()) {
         break;
       }
+      segIndex++;
       lengthToEndEffector += seg.getLength() + seg.getJointRadius() * 2.0f;
     }
   }
 
   /**
-   * Sets the length to the end effector.
+   * Sets the length to the end effector based on the length calculated
+   * by the next segment.
    * @param prevSegment The previous segment in the line of segments
    *     to the end effector.
    */
-  public void updateLengthToEndEffector(SegmentBody prevSegment) {
-    lengthToEndEffector = prevSegment.getLengthToEndEffector() -
-        prevSegment.getJointRadius() * 2.0f - getLength();
+  public void updateLengthToEndEffector() {
+    if (isEndEffector() ||
+        nextSegmentBody.isEndEffector()) {
+      lengthToEndEffector = 0f;
+    } else {
+      lengthToEndEffector = nextSegmentBody.getLengthToEndEffector() +
+          getJointRadius() * 2.0f + getLength();
+    }
   }
   
   public float getJointRadius() {
@@ -107,7 +113,9 @@ public class SegmentBody {
 
   public void setNext(SegmentBody nextSegmentBody) {
     this.nextSegmentBody = nextSegmentBody;
-    nextSegmentBody.setPrev(this);
+    if (nextSegmentBody != null) {
+      nextSegmentBody.setPrev(this); 
+    }
   }
 
   public SegmentBody getPrev() {

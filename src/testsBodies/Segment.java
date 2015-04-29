@@ -31,14 +31,16 @@ public class Segment extends SegmentBody {
   /**
    * Calculates current torque on the joint.
    */
-  public void getTorque() {
+  public float getTorque() {
     Vec2 centerOfMass = new Vec2();
     float totalMass = calculateLocalCenterOfMass(centerOfMass);
     // TODO
+    return 0;
   }
   
   /**
-   * Calculates the center of mass for the following segments.
+   * Calculates the center of mass for the following segments, including the
+   *     end effector but not including this segment
    * @param The center of mass
    * @return The total mass 
    */

@@ -8,7 +8,6 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
-import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
 
 /**
  * @author Benjamin
@@ -76,6 +75,7 @@ public class Motor extends RevoluteJointDef {
    * @param desiredTorque The torque that is desired to be applied, in N-m.
    */
   public void setTorque(float desiredTorque) {
+    this.desiredTorque = desiredTorque;
     float sign = (desiredTorque < 0) ? -1 : 1;
     maxMotorTorque = sign * Math.min(
         Math.abs(desiredTorque),

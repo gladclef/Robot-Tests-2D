@@ -6,7 +6,6 @@ package testsBodies;
 import static org.junit.Assert.*;
 
 import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -36,9 +35,6 @@ public class JUnitRobotArmSegmented {
     fd.shape.m_radius = 4.0f;
     fd.density = 1.0f;
     fd.friction = 0.9f;
-    
-    PolygonShape sd = new PolygonShape();
-    sd.setAsBox(50.0f, 1.0f);
     
     BodyDef bd = new BodyDef();
     bd.position.set(new Vec2(-20f, -20f));
