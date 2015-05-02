@@ -17,7 +17,7 @@ import org.junit.Test;
  * @author Benjamin
  *
  */
-public class JUnitMotor {
+public class MotorJUnit {
 
   public static World getNewWorld() {
     World world = new World(new Vec2(0f, -10f));

@@ -14,15 +14,15 @@ import org.junit.Test;
  * @author Benjamin
  *
  */
-public class JUnitSegment {
+public class SegmentJUnity {
 
   public static Segment getNewSegment() {
-    World world = JUnitMotor.getNewWorld();
+    World world = MotorJUnit.getNewWorld();
     return getNewSegment(world, new Vec2());
   }
   
   public static Segment getNewSegment(World world, Vec2 bodyPos) {
-    Body body = JUnitMotor.getNewBody(world, bodyPos);
+    Body body = MotorJUnit.getNewBody(world, bodyPos);
     return new Segment(1f, new Vec2(), 1f, body);
   }
   

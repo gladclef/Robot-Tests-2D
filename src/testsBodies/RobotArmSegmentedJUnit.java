@@ -17,7 +17,7 @@ import org.junit.Test;
  * @author Benjamin
  *
  */
-public class JUnitRobotArmSegmented {
+public class RobotArmSegmentedJUnit {
 
   private static World getNewWorld() {
     World world = new World(new Vec2(0f, -10f));

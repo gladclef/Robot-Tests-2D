@@ -11,7 +11,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import testsBodies.JUnitRobotArmSegmented;
+import testsBodies.RobotArmSegmentedJUnit;
 import testsBodies.RobotArmSegmented;
 import testsBodies.Segment;
 
@@ -19,7 +19,7 @@ import testsBodies.Segment;
  * @author Benjamin
  *
  */
-public class JUnitMoveTowardsGoal {
+public class MoveTowardsGoalJUnit {
   
   private static SegmentedArmPositions getNewPositions(RobotArmSegmented arm) {
     SegmentedArmPositions positions = new SegmentedArmPositions();
@@ -28,7 +28,7 @@ public class JUnitMoveTowardsGoal {
   }
   
   private static MoveTowardsGoal getNewInstance() {
-    RobotArmSegmented arm = JUnitRobotArmSegmented.getNewInstance();
+    RobotArmSegmented arm = RobotArmSegmentedJUnit.getNewInstance();
     return new MoveTowardsGoal(arm, getNewPositions(arm));
   }
 
@@ -61,7 +61,7 @@ public class JUnitMoveTowardsGoal {
   @Test
   public void testGetArm() {
     MoveTowardsGoal logic = getNewInstance();
-    RobotArmSegmented arm = JUnitRobotArmSegmented.getNewInstance();
+    RobotArmSegmented arm = RobotArmSegmentedJUnit.getNewInstance();
     logic.setArm(arm);
     assertTrue(logic.getArm().equals(arm));
   }
@@ -72,7 +72,7 @@ public class JUnitMoveTowardsGoal {
   @Test
   public void testSetArm() {
     MoveTowardsGoal logic = getNewInstance();
-    RobotArmSegmented arm = JUnitRobotArmSegmented.getNewInstance();
+    RobotArmSegmented arm = RobotArmSegmentedJUnit.getNewInstance();
     logic.setArm(arm);
     assertTrue(logic.getArm().equals(arm));
   }

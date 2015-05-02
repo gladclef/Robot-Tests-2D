@@ -17,15 +17,15 @@ import org.junit.Test;
  * @author Benjamin
  *
  */
-public class JUnitSegmentBody {
+public class SegmentBodyJUnit {
 
   public static SegmentBody getNewSegmentBody() {
-    World world = JUnitMotor.getNewWorld();
+    World world = MotorJUnit.getNewWorld();
     return getNewSegmentBody(world);
   }
   
   public static SegmentBody getNewSegmentBody(World world) {
-    Body body = JUnitMotor.getNewBody(world, new Vec2());
+    Body body = MotorJUnit.getNewBody(world, new Vec2());
     return new SegmentBody(1f, new Vec2(), 1f, body);
   }
   
@@ -100,7 +100,7 @@ public class JUnitSegmentBody {
    */
   @Test
   public void testGetLengthToEndEffector() {
-    World world = JUnitMotor.getNewWorld();
+    World world = MotorJUnit.getNewWorld();
     SegmentBody seg = getNewSegmentBody(world);
     
     // no other segments
@@ -112,7 +112,7 @@ public class JUnitSegmentBody {
    */
   @Test
   public void testUpdateLengthToEndEffectorListOfSegmentBody() {
-    World world = JUnitMotor.getNewWorld();
+    World world = MotorJUnit.getNewWorld();
     SegmentBody seg = getNewSegmentBody(world);
     
     // three other segments with length 1 and joint radius 1
@@ -129,7 +129,7 @@ public class JUnitSegmentBody {
    */
   @Test
   public void testUpdateLengthToEndEffectorSegmentBody() {
-    World world = JUnitMotor.getNewWorld();
+    World world = MotorJUnit.getNewWorld();
     
     // four segments with length 1 and joint radius 1
     List<SegmentBody> segments = new ArrayList<SegmentBody>();
@@ -188,9 +188,9 @@ public class JUnitSegmentBody {
    */
   @Test
   public void testSetBody() {
-    World world = JUnitMotor.getNewWorld();
+    World world = MotorJUnit.getNewWorld();
     SegmentBody seg = getNewSegmentBody(world);
-    Body body = JUnitMotor.getNewBody(world, new Vec2(10f, 10f));
+    Body body = MotorJUnit.getNewBody(world, new Vec2(10f, 10f));
     seg.setBody(body);
     assertEquals(body, seg.getBody());
   }
@@ -200,7 +200,7 @@ public class JUnitSegmentBody {
    */
   @Test
   public void testGetNext() {
-    World world = JUnitMotor.getNewWorld();
+    World world = MotorJUnit.getNewWorld();
     SegmentBody seg = getNewSegmentBody(world);
     SegmentBody next = getNewSegmentBody(world);
     seg.setNext(next);
@@ -212,7 +212,7 @@ public class JUnitSegmentBody {
    */
   @Test
   public void testSetNext() {
-    World world = JUnitMotor.getNewWorld();
+    World world = MotorJUnit.getNewWorld();
     SegmentBody seg = getNewSegmentBody(world);
     SegmentBody next = getNewSegmentBody(world);
     seg.setNext(next);
@@ -224,7 +224,7 @@ public class JUnitSegmentBody {
    */
   @Test
   public void testGetPrev() {
-    World world = JUnitMotor.getNewWorld();
+    World world = MotorJUnit.getNewWorld();
     SegmentBody seg = getNewSegmentBody(world);
     SegmentBody prev = getNewSegmentBody(world);
     seg.setPrev(prev);
@@ -236,7 +236,7 @@ public class JUnitSegmentBody {
    */
   @Test
   public void testSetPrev() {
-    World world = JUnitMotor.getNewWorld();
+    World world = MotorJUnit.getNewWorld();
     SegmentBody seg = getNewSegmentBody(world);
     SegmentBody prev = getNewSegmentBody(world);
     seg.setPrev(prev);
@@ -248,7 +248,7 @@ public class JUnitSegmentBody {
    */
   @Test
   public void testIsEndEffector() {
-    World world = JUnitMotor.getNewWorld();
+    World world = MotorJUnit.getNewWorld();
     
     // three segments with length 1 and joint radius 1
     List<SegmentBody> segments = new ArrayList<SegmentBody>();
@@ -271,7 +271,7 @@ public class JUnitSegmentBody {
    */
   @Test
   public void testGetLocalNextJointPos() {
-    World world = JUnitMotor.getNewWorld();
+    World world = MotorJUnit.getNewWorld();
     SegmentBody seg1 = getNewSegmentBody(world);
     SegmentBody seg2 = getNewSegmentBody(world);
     seg1.setNext(seg2);
