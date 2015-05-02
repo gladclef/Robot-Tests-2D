@@ -9,6 +9,7 @@ import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 import org.junit.Test;
@@ -26,21 +27,23 @@ public class MotorJUnit {
   
   public static Body getNewBody(World world, Vec2 pos) {
     FixtureDef fd = new FixtureDef();
-    fd.shape = new CircleShape();
+    fd.setShape(new CircleShape());
+    fd.setDensity(1.0f);
     
     BodyDef bd = new BodyDef();
     bd.position.set(pos);
+    bd.setType(BodyType.DYNAMIC);
     Body body = world.createBody(bd);
     body.createFixture(fd);
     
     return body;
   }
   
-  private static Motor getNewMotor() {
+  public static Motor getNewMotor() {
     return getNewMotor(getNewWorld());
   }
   
-  private static Motor getNewMotor(World world) {
+  public static Motor getNewMotor(World world) {
     Body b1 = getNewBody(world, new Vec2(-10, 0));
     Body b2 = getNewBody(world, new Vec2(10, 0));
     Vec2 anchor = new Vec2();
