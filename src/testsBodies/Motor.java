@@ -51,16 +51,12 @@ public class Motor extends RevoluteJointDef {
   }
 
   /**
+   * When set, resets the torque applied based on the last desired torque.
    * @param actualMaxTorque The maximum amount of torque that this motor can apply.
    */
   public void setActualMaxTorque(float actualMaxTorque) {
-    boolean updateTorque = (
-        Math.abs(desiredTorque) >=
-        Math.abs(actualMaxTorque));
     this.actualMaxTorque = actualMaxTorque;
-    if (updateTorque) {
-      setTorque(desiredTorque);
-    }
+    setTorque(desiredTorque);
   }
   
   /**

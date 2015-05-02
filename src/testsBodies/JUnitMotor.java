@@ -84,12 +84,13 @@ public class JUnitMotor {
   @Test
   public void testSetActualMaxTorque() {
     Motor motor = getNewMotor();
-    motor.setActualMaxTorque(10000);
-    assertEquals(10000, motor.getActualMaxTorque(), 0.1);
-    motor.setPower(1.1f);
+    motor.setActualMaxTorque(1000);
+    assertEquals(1000, motor.getActualMaxTorque(), 0.1);
+    motor.setTorque(1500f);
+    assertEquals(1000, motor.getTorque(), 0.1);
     motor.setActualMaxTorque(2000);
     assertEquals(2000, motor.getActualMaxTorque(), 0.1);
-    assertEquals(2000, motor.getTorque(), 0.1);
+    assertEquals(1500, motor.getTorque(), 0.1);
   }
 
   /**
