@@ -12,7 +12,7 @@ import org.junit.Test;
  * @author gladc_000
  *
  */
-public class TrigTest {
+public class TrigJUnit {
 
   /**
    * Test method for {@link math.Trig#getLength(float, float)}.
