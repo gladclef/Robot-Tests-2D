@@ -15,7 +15,7 @@ public class RadialEnergyField implements EnergyField<Integer> {
   private float radius;
   private Vec2 lastGoalPosition;
   private float[] lastEnergyField;
-  private int pointCount, lastLowestEnergyPosition;
+  private int pointCount, lastLowestEnergyPosition, lastGoalRadius;
   
   /**
    * Create a new energy field
@@ -32,11 +32,31 @@ public class RadialEnergyField implements EnergyField<Integer> {
     setPointCount(pointCount);
     setRadius(radius);
   }
-  
+
+  /**
+   * Generates the energy field, given the goal position relative to the local
+   *     position, where [0,0] is the center of the radial energy field to test
+   *     from.
+   * @param goalLocalPos The position of the goal that the arm of length radius
+   *     is trying to get to.
+   */
   public void generateField(Vec2 goalLocalPos) {
+    generateField(goalLocalPos, radius);
+  }
+  
+  /**
+   * Generates the energy field, given the goal position relative to the local
+   *     position, where [0,0] is the center of the radial energy field to test
+   *     from.
+   * @param goalLocalPos The position of the goal that the arm of length radius
+   *     is trying to get to.
+   * @param goalRadius The radius of the goal that is trying to be achieved.
+   */
+  public void generateField(Vec2 goalLocalPos, float goalRadius) {
     // check for a cached value
     if (lastGoalPosition != null &&
-        lastGoalPosition.equals(goalLocalPos)) {
+        lastGoalPosition.equals(goalLocalPos) &&
+        lastGoalRadius == goalRadius) {
       return;
     }
     

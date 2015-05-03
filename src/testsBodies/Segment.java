@@ -3,6 +3,8 @@
  */
 package testsBodies;
 
+import math.Trig;
+
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 
@@ -43,14 +45,14 @@ public class Segment extends SegmentBody {
     
     // calculate the force against the normal to the vector describing
     // the center of mass
-    double angle = Math.atan(centerOfMass.y / centerOfMass.x);
+    double angle = Trig.getAngle(centerOfMass);
     double x = 2 * gravMagnitude * Math.sin(angle / 2);
-    double y = Math.sqrt(gravMagnitude * gravMagnitude - x * x);
-    double normMagnitude = Math.sqrt(x * x + y * y);
+    double y = Trig.getLength(gravMagnitude, x);
+    double normMagnitude = Trig.getLength(x, y);
     
     // calculate the torque
     float torque = (float) (normMagnitude * centerOfMass.length());
-    double combinedAngle = getAngle(grav) - getAngle(centerOfMass);
+    double combinedAngle = Trig.getAngle(grav) - Trig.getAngle(centerOfMass);
     if (Math.abs(combinedAngle) > Math.PI) {
         combinedAngle = - (Math.PI - Math.abs(combinedAngle));
     }
@@ -87,21 +89,5 @@ public class Segment extends SegmentBody {
     }
     
     return totalMass;
-  }
-  
-  /**
-   * Gets the angle of the vector, from PI to -PI,
-   *     where 0 is located at [1,0]
-   * @param v The vector
-   * @return Angle of the vector, in radians.
-   */
-  private float getAngle(Vec2 v) {
-    if (v.x == 0) {
-      if (v.y < 0) {
-        return (float) (-Math.PI / 2);
-      }
-      return (float) (Math.PI / 2);
-    }
-    return (float) Math.atan(v.y / v.x);
   }
 }
