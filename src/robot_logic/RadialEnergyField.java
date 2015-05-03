@@ -104,6 +104,20 @@ public class RadialEnergyField implements EnergyField<Integer> {
     lastGoalPosition = goalLocalPos;
     lastGoalRadius = goalRadius;
   }
+  
+  /**
+   * Find the minimum distance between 
+   * @param goalLocalPos
+   * @param goalRadius
+   * @return
+   */
+  private float getMinDistanceToGoal(Vec2 goalLocalPos, float goalRadius) {
+    float distance = goalLocalPos.length();
+    if (distance < radius + goalRadius) {
+      return 0;
+    }
+    return distance - radius - goalRadius;
+  }
 
   /**
    * Calculates the distance between the point on the origin circle given by the
