@@ -51,8 +51,8 @@ public class Segment extends SegmentBody {
     // calculate the torque
     float torque = (float) (normMagnitude * centerOfMass.length());
     double combinedAngle = getAngle(grav) - getAngle(centerOfMass);
-    if (Math.abs(combinedAngle) > Math.PI / 2) {
-        combinedAngle = - (Math.PI / 2 - Math.abs(combinedAngle));
+    if (Math.abs(combinedAngle) > Math.PI) {
+        combinedAngle = - (Math.PI - Math.abs(combinedAngle));
     }
     float sign = (combinedAngle > 0) ? 1f : -1f; 
     torque *= sign;
@@ -90,7 +90,7 @@ public class Segment extends SegmentBody {
   }
   
   /**
-   * Gets the angle of the vector, from PI/2 to -PI/2,
+   * Gets the angle of the vector, from PI to -PI,
    *     where 0 is located at [1,0]
    * @param v The vector
    * @return Angle of the vector, in radians.
@@ -98,9 +98,9 @@ public class Segment extends SegmentBody {
   private float getAngle(Vec2 v) {
     if (v.x == 0) {
       if (v.y < 0) {
-        return (float) (-Math.PI / 4);
+        return (float) (-Math.PI / 2);
       }
-      return (float) (Math.PI / 4);
+      return (float) (Math.PI / 2);
     }
     return (float) Math.atan(v.y / v.x);
   }
