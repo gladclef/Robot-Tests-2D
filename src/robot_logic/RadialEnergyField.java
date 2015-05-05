@@ -18,6 +18,7 @@ public class RadialEnergyField implements EnergyField<Integer> {
   private Vec2 lastGoalPosition;
   private float[] lastEnergyField;
   private int pointCount, lastLowestEnergyPosition;
+  private List<Vec2> lastObstaclePositions;
 
   /**
    * Create a new energy field
@@ -29,7 +30,8 @@ public class RadialEnergyField implements EnergyField<Integer> {
    *          position (assumed that the origin is actually an arm on a pivot
    *          that is trying to bring the end of the arm as close as possible to
    *          the goal position).
-   * @throws IllegalArgumentException If pointCount is not even.
+   * @throws IllegalArgumentException
+   *           If pointCount is not even.
    */
   public RadialEnergyField(int pointCount, float radius)
       throws IllegalArgumentException {
@@ -77,36 +79,36 @@ public class RadialEnergyField implements EnergyField<Integer> {
     // 0 = on the circle
     float directAngle = Trig.getAngle(goalLocalPos);
     float distance1 = calculateDistance(directAngle, goalLocalPos, goalRadius);
-    float distance2 =
-        calculateDistance(directAngle + (float) Math.PI, goalLocalPos,
-            goalRadius);
-    float minDistance = Math.min(distance1, distance2);
-    float maxDistance = Math.max(distance1, distance2) - minDistance;
+    float distance2 = calculateDistance(directAngle + (float) Math.PI,
+        goalLocalPos, goalRadius);
+    float maxDistance = Math.max(distance1, distance2);
+    float minDistance = getMinDistanceToGoal(goalLocalPos, goalRadius);
+    float distanceRange = maxDistance - minDistance;
 
     // find the potential energy of all points
-    if (lastEnergyField == null ||
-        lastEnergyField.length != pointCount) {
+    if (lastEnergyField == null || lastEnergyField.length != pointCount) {
       lastEnergyField = new float[pointCount];
     }
     int halfPointCount = pointCount / 2;
     for (int i = 0; i < halfPointCount; i++) {
       float angle = getAngleForPosition(i);
-      float distance =
-          calculateDistance(angle, goalLocalPos, goalRadius) - minDistance;
-      lastEnergyField[i] = distance / maxDistance;
+      float distance = calculateDistance(angle, goalLocalPos, goalRadius)
+          - minDistance;
+      lastEnergyField[i] = distance / distanceRange;
       angle += Math.PI;
-      distance =
-          calculateDistance(angle, goalLocalPos, goalRadius) - minDistance;
-      lastEnergyField[i + halfPointCount] = distance / maxDistance;
+      distance = calculateDistance(angle, goalLocalPos, goalRadius)
+          - minDistance;
+      lastEnergyField[i + halfPointCount] = distance / distanceRange;
     }
-    
+
     // cache the results
     lastGoalPosition = goalLocalPos;
     lastGoalRadius = goalRadius;
   }
-  
+
   /**
-   * Find the minimum distance between 
+   * Find the minimum distance between
+   * 
    * @param goalLocalPos
    * @param goalRadius
    * @return
@@ -133,24 +135,53 @@ public class RadialEnergyField implements EnergyField<Integer> {
    * @return shortest distance between the point on the origin circle and the
    *         goal circle
    */
-  private float calculateDistance(
-      float angleFromOrigin, Vec2 goalLocalPos, float goalRadius) {
+  private float calculateDistance(float angleFromOrigin, Vec2 goalLocalPos,
+      float goalRadius) {
 
     // get the position on the origin circle
-    Vec2 originLocalPosition =
-        new Vec2((float) (radius * Math.cos(angleFromOrigin)),
-            (float) (radius * Math.sin(angleFromOrigin)));
+    Vec2 originLocalPosition = new Vec2(
+        (float) (radius * Math.cos(angleFromOrigin)),
+        (float) (radius * Math.sin(angleFromOrigin)));
 
     // find the distance between this position and the goal circle
-    float distanceToGoal =
-        Trig.getLength(originLocalPosition.x - goalLocalPos.x,
-            originLocalPosition.y - goalLocalPos.y);
+    float distanceToGoal = originLocalPosition.sub(goalLocalPos).length();
     return Math.abs(distanceToGoal - goalRadius);
   }
 
-  public void
-      generateField(Vec2 goalLocalPos, List<Vec2> obstacleLocalPositions) {
-    // TODO Auto-generated method stub
+  /**
+   * Generate the field based on the position of obstacles.
+   * 
+   * @param goalLocalPos
+   *          The position of the goal.
+   * @param obstacleLocalPositions
+   *          Positions of the obstacles, in local coordinates
+   */
+  public void generateField(Vec2 goalLocalPos, List<Vec2> obstacleLocalPositions) {
+    // get some values
+    float goalRadius = radius;
+
+    // check for a cached value
+    if (lastGoalPosition != null && lastGoalPosition.equals(goalLocalPos)
+        && lastGoalRadius == goalRadius && lastObstaclePositions != null
+        && lastObstaclePositions == obstacleLocalPositions) {
+      return;
+    }
+
+    // find the obstacle located closest to the goal
+    Vec2 closestObstaclePosition = goalLocalPos.clone(); // TODO, change
+
+    // generate a field without obstacles, where the goal is moved to the least
+    // obstructed angle from the obstacle located closes to the goal
+    generateField(closestObstaclePosition);
+
+    // augment the generated field by the percentage of volume which is empty at
+    // each position in the field
+    // TODO
+
+    // cache the results
+    lastGoalPosition = goalLocalPos;
+    lastGoalRadius = goalRadius;
+    lastObstaclePositions = obstacleLocalPositions;
   }
 
   /**
@@ -211,7 +242,7 @@ public class RadialEnergyField implements EnergyField<Integer> {
    */
   public float getAngleForPosition(int position) {
     double twoPi = Math.PI * 2.0;
-    double units = (double)position / (double)pointCount;
+    double units = (double) position / (double) pointCount;
     return (float) (units * twoPi);
   }
 

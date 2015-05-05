@@ -122,10 +122,10 @@ public class RadialEnergyFieldJUnit {
     }
 
     // check that the highest energy position is the one farthest from the
-    // goal circle and the lowest energy point is the one closes to it
-    field.generateField(new Vec2(5f, 0f));
-    assertEquals(0f, field.getEnergy(0), 0.01);
-    assertEquals(1f, field.getEnergy(180), 0.01);
+    // goal circle and the lowest energy point is the one closest to it
+    field.generateField(new Vec2(9f, 0f));
+    assertEquals(0f, field.getEnergy(new Integer(0)), 0.01);
+    assertEquals(1f, field.getEnergy(new Integer(180)), 0.01);
   }
 
   /**
@@ -145,7 +145,7 @@ public class RadialEnergyFieldJUnit {
 
     // check that the highest energy position is the one farthest from the
     // goal circle and the lowest energy point is the one closes to it
-    field.generateField(new Vec2(5f, 0f));
+    field.generateField(new Vec2(9f, 0f));
     assertEquals(0f, field.getEnergy(0f), 0.01);
     assertEquals(1f, field.getEnergy((float) Math.PI), 0.01);
   }
@@ -239,7 +239,7 @@ public class RadialEnergyFieldJUnit {
   public void testGetBuffer() {
     RadialEnergyField field = getRadialEnergyField();
     field.setBuffer(2f);
-    assertEquals(2f, field.getRadius(), 0.01);
+    assertEquals(2f, field.getBuffer(), 0.01);
   }
 
   /**
@@ -249,6 +249,6 @@ public class RadialEnergyFieldJUnit {
   public void testSetBuffer() {
     RadialEnergyField field = getRadialEnergyField();
     field.setBuffer(2f);
-    assertEquals(2f, field.getRadius(), 0.01);
+    assertEquals(2f, field.getBuffer(), 0.01);
   }
 }
